@@ -4,6 +4,8 @@ import os.path
 import json
 from cookie import COOKIE
 
+cookie = COOKIE
+
 
 ACHIEVEMENT_DATA_URL = "https://github.com/Dimbreath/StarRailData/raw/master/ExcelOutput/AchievementData.json"
 TEXT_DATA_URL = "https://raw.githubusercontent.com/Dimbreath/StarRailData/master/TextMap/TextMapEN.json"
@@ -50,8 +52,12 @@ def process():
     with open('processed_data.json', 'w', encoding='utf-8') as proc_data_file:
         json.dump(data, proc_data_file, indent=4, ensure_ascii=False)
 
+def set_cookie(new_cookie: str):
+    global cookie
+    cookie = new_cookie
+
 def check_chive(cid: int):
-    r = requests.put(STARDB_CHIVE_API_URL + str(cid), cookies={"id": COOKIE})
+    r = requests.put(STARDB_CHIVE_API_URL + str(cid), cookies={"id": cookie})
     if r.status_code == 200:
         print(f"PUT request on id {cid} successful")
     else:
@@ -59,7 +65,7 @@ def check_chive(cid: int):
         print(r.text)
 
 def uncheck_chive(cid: int):
-    r = requests.delete(STARDB_CHIVE_API_URL + str(cid), cookies={"id": COOKIE})
+    r = requests.delete(STARDB_CHIVE_API_URL + str(cid), cookies={"id": cookie})
     if r.status_code == 200:
         print(f"DELETE request on id {cid} successful")
     else:

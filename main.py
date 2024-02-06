@@ -4,13 +4,26 @@ import input
 import time
 import manage_data
 import scan_util
+import argparse
 
 TAB_COUNT = 9
 MAX_CHIVES_IN_CATEGORY = 400
 
-debug = False
-upload_while_scanning = True
-do_uncheck_while_scanning = False
+parser = argparse.ArgumentParser()
+parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
+parser.add_argument("-c", "--check", help="check items on stardb (needs the cookie in "
+                                          "cookie.py or --cookie COOKIE)", action="store_true")
+parser.add_argument("-u", "--uncheck", help="(NOT RECOMMENDED) unchek items on stardb (needs the cookie in "
+                                            "cookie.py or --cookie COOKIE); "
+                                            "unchecks only the visible achievements", action="store_true")
+parser.add_argument("--cookie", help="set cookie not using cookie.py", type=str, default="")
+args = parser.parse_args()
+
+debug = False if args.verbose is None else args.verbose
+upload_while_scanning = True if args.check is None else args.check
+do_uncheck_while_scanning = False if args.uncheck is None else args.uncheck
+if args.cookie is not None:
+    manage_data.set_cookie(args.cookie)
 
 completed_list: list[int] = []
 
