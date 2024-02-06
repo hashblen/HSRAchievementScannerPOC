@@ -11,7 +11,6 @@ MAX_CHIVES_IN_CATEGORY = 400
 debug = False
 upload_while_scanning = True
 do_uncheck_while_scanning = False
-stopped = False
 
 completed_list: list[int] = []
 
@@ -20,9 +19,6 @@ if __name__ == '__main__':
     input.debug = debug
     manage_data.download()
     manage_data.process()
-    '''app = Application().connect(found_index=0, class_name = "UnityWndClass", title='Honkai: Star Rail')
-    window = app.window(title="Honkai: Star Rail")
-    window.set_focus()'''
     hwnd = win32gui.FindWindow("UnityWndClass", "Honkai: Star Rail")
     if not hwnd:
         print("Honkai: Star Rail window not found. Is it running?")

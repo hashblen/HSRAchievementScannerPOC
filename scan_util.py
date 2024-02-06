@@ -11,6 +11,7 @@ COMPLETED_X_END = 1835 / 1920
 NAME_Y = [255 / 1080, 410 / 1080, 570 / 1080, 725 / 1080, 885 / 1080, 880 / 1080]
 COMPLETED_Y = [(x * 1080 + 20) / 1080 for x in NAME_Y]
 FONT_HEIGHT = 40 / 1080  # ? idk
+DESC_SHIFT_Y = 40 / 1080
 
 default_whitelist = """abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ()-, 0123456789'"!?/ö"""
 
@@ -51,9 +52,14 @@ def image_to_string(img: Image, psm=7, whitelist=None) -> str:
     return pytesseract.image_to_string(img, config=config).replace("\n", " ").strip()
 
 
-def get_achievement_name(index: int) -> str:  # index stars at 0
+def get_achievement_name(index: int) -> str:  # index starts at 0
     index = min(index, 4)
     img = take_screenshot(NAME_X, NAME_Y[index], NAME_X_END - NAME_X, FONT_HEIGHT)
+    return image_to_string(img)
+
+def get_achievement_desc(index: int) -> str:
+    index = min(index, 4)
+    img = take_screenshot(NAME_X, NAME_Y[index] + DESC_SHIFT_Y, NAME_X_END - NAME_X, FONT_HEIGHT)
     return image_to_string(img)
 
 
@@ -67,11 +73,19 @@ def get_closest_name_match(index: int):
     name_from_image = get_achievement_name(index)
     maxCost = 0.
     maxName = ""
-    for chiveName in data.keys():
+    maxId = -1
+    for c_id in data.keys():
+        chiveName = data[c_id]["title"]
         cost = Levenshtein.ratio(name_from_image, chiveName)
+        if maxName == chiveName:  # If the max and the current achievements have the same name, look at the description.
+            desc_from_image = get_achievement_desc(index)
+            desc_cost = Levenshtein.ratio(desc_from_image, data[c_id]["desc"])
+            if desc_cost > 0.7:
+                return chiveName, c_id
         if cost > maxCost:
             maxCost = cost
             maxName = chiveName
+            maxId = c_id
     if maxCost < 0.5:
         raise ValueError("No close match")
-    return maxName, data[maxName]
+    return maxName, maxId

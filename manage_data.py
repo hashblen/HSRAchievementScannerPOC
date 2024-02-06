@@ -42,8 +42,10 @@ def process():
         a_id = achievement["AchievementID"]
         text_hash = achievement["AchievementTitle"]["Hash"]
         title = db_textmap[str(text_hash)]
+        desc_hash = achievement["AchievementDesc"]["Hash"]
+        desc = db_textmap[str(desc_hash)]
         print("Found achievement:", a_id, "\twith text hash", text_hash, "\ttitle:", title)
-        data[title] = a_id
+        data[a_id] = {"title": title, "desc": desc}
 
     with open('processed_data.json', 'w', encoding='utf-8') as proc_data_file:
         json.dump(data, proc_data_file, indent=4, ensure_ascii=False)
