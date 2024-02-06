@@ -2,9 +2,8 @@ from datetime import datetime
 import requests
 import os.path
 import json
-from cookie import COOKIE
 
-cookie = COOKIE
+cookie = ""
 
 
 ACHIEVEMENT_DATA_URL = "https://github.com/Dimbreath/StarRailData/raw/master/ExcelOutput/AchievementData.json"
@@ -12,8 +11,8 @@ TEXT_DATA_URL = "https://raw.githubusercontent.com/Dimbreath/StarRailData/master
 STARDB_CHIVE_API_URL = "https://stardb.gg/api/users/me/achievements/"
 
 # Returns True if it downloaded, False otherwise.
-def download():
-    if os.path.exists("processed_data.json"):
+def download(force=False):
+    if not force and os.path.exists("processed_data.json"):
         last_modified = os.path.getmtime("processed_data.json")
         URL = "https://api.github.com/repos/Dimbreath/StarRailData/commits/master"
         PARAMS = {'Accept': 'application/vnd.github+json'}

@@ -10,27 +10,31 @@ TAB_COUNT = 9
 MAX_CHIVES_IN_CATEGORY = 400
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
-parser.add_argument("-c", "--check", help="check items on stardb (needs the cookie in "
-                                          "cookie.py or --cookie COOKIE)", action="store_true")
-parser.add_argument("-u", "--uncheck", help="(NOT RECOMMENDED) unchek items on stardb (needs the cookie in "
-                                            "cookie.py or --cookie COOKIE); "
+parser.add_argument("--cookie", help="set cookie", type=str)
+parser.add_argument("-c", "--check", help="check items on stardb (needs --cookie \"COOKIE\")", action="store_true")
+parser.add_argument("-u", "--uncheck", help="(NOT RECOMMENDED) uncheck items on stardb (needs --cookie \"COOKIE\"); "
                                             "unchecks only the visible achievements", action="store_true")
-parser.add_argument("--cookie", help="set cookie not using cookie.py", type=str, default="")
+parser.add_argument("-fd", "--forcedownload", help="(RECOMMENDED ON FIRST USE) Force redownload of the achievements "
+                                                   "list", action="store_true")
+parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
 args = parser.parse_args()
 
 debug = False if args.verbose is None else args.verbose
-upload_while_scanning = True if args.check is None else args.check
+upload_while_scanning = False if args.check is None else args.check
 do_uncheck_while_scanning = False if args.uncheck is None else args.uncheck
 if args.cookie is not None:
     manage_data.set_cookie(args.cookie)
+elif upload_while_scanning or do_uncheck_while_scanning:
+    print("You need to specify the cookie with --cookie. Type 'python main.py --help' for more info.")
+    exit()
+force_download = False if args.forcedownload is None else args.forcedownload
 
 completed_list: list[int] = []
 
 
 if __name__ == '__main__':
     input.debug = debug
-    manage_data.download()
+    manage_data.download(force=force_download)
     manage_data.process()
     hwnd = win32gui.FindWindow("UnityWndClass", "Honkai: Star Rail")
     if not hwnd:
