@@ -18,6 +18,12 @@ Copy that value and remember it.
 
 ## Running
 
+### User Graphical interface
+
+Run `gui.py`.
+
+### Command-Line Interface
+
 Run `main.py`. Command line arguments can be seen by doing `python main.py --help`.
 
 DO NOT MOVE THE MOUSE OR TOUCH THE KEYBOARD WHILE IT IS RUNNING, AS HSR WILL GO BACK TO MOUSE+KEYBOARD MODE AND EVERYTHING WILL BREAK!
