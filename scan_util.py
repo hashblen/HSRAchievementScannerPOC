@@ -80,8 +80,12 @@ def get_closest_name_match(index: int):
         if maxName == chiveName:  # If the max and the current achievements have the same name, look at the description.
             desc_from_image = get_achievement_desc(index)
             desc_cost = Levenshtein.ratio(desc_from_image, data[c_id]["desc"])
-            if desc_cost > 0.7:
-                return chiveName, c_id
+            max_desc_cost = Levenshtein.ratio(desc_from_image, data[maxId]["desc"])
+            if desc_cost > max_desc_cost:
+                maxCost = cost
+                maxName = chiveName
+                maxId = c_id
+                continue
         if cost > maxCost:
             maxCost = cost
             maxName = chiveName
